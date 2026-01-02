@@ -19,6 +19,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # FIX: always fetch a known-good Gradle wrapper JAR
+      - name: Download Gradle wrapper JAR (fix)
+        run: |
+          mkdir -p gradle/wrapper
+          curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.2.0/gradle/wrapper/gradle-wrapper.jar
+          ls -lah gradle/wrapper/gradle-wrapper.jar
+
+      - name: Verify wrapper JAR
+        run: |
+          jar tf gradle/wrapper/gradle-wrapper.jar >/dev/null
+          echo "Wrapper jar OK"
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
