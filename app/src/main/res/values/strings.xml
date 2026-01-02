@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NFC Inject</string>
+    <string name="acc_desc">Vkladá NFC NDEF text do aktuálneho poľa (focused) a pridá ENTER.</string>
+</resources>
