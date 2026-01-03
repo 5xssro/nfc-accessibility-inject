@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (no wrapper)
 
 on:
   workflow_dispatch:
@@ -19,24 +19,26 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # FIX: always fetch a known-good Gradle wrapper JAR
-      - name: Download Gradle wrapper JAR (fix)
+      # Android SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Install Gradle directly (NO WRAPPER)
+      - name: Install Gradle
         run: |
-          mkdir -p gradle/wrapper
-          curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.2.0/gradle/wrapper/gradle-wrapper.jar
-          ls -lah gradle/wrapper/gradle-wrapper.jar
+          sudo apt-get update
+          sudo apt-get install -y gradle
+          gradle --version
 
-      - name: Verify wrapper JAR
-        run: |
-          jar tf gradle/wrapper/gradle-wrapper.jar >/dev/null
-          echo "Wrapper jar OK"
+      # Accept licenses (important)
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
+      # Build
       - name: Build debug APK
-        run: ./gradlew assembleDebug
+        run: gradle assembleDebug
 
+      # Upload result
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
